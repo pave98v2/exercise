@@ -2,6 +2,9 @@ import React from "react";
 import "./DataVisualizer.css";
 import Chart from 'chart.js/auto';
 
+/**
+ * Component for parsing and visualizing given data.
+ */
 class DataVisualizer extends React.Component {
   constructor(props) {
     super(props);
@@ -17,6 +20,11 @@ class DataVisualizer extends React.Component {
     this.countStandardDeviation = this.countStandardDeviation.bind(this);
   }
 
+
+  /**
+   * Fetch data from "api" when component is mounted. 
+   * 
+   */
   componentDidMount() {
     fetch("response.json", {
       headers: {
@@ -40,6 +48,11 @@ class DataVisualizer extends React.Component {
       })
   }
 
+
+  /**
+   * Parses givent data removing faulty data points.
+   * @returns {array} parsed data
+   */
   parseData(data) {
     let parsedDataArrays = [];
     let entries = Object.entries(data);
@@ -60,6 +73,10 @@ class DataVisualizer extends React.Component {
     return parsedDataArrays;
   }
 
+
+  /**
+   * Creates graphs with Chart.js and places them on their given canvas tags.
+   */
   createGraphs() {
     let data = Object.entries(this.state.data);
     data.forEach((element, index) => {
@@ -96,10 +113,16 @@ class DataVisualizer extends React.Component {
           }
         }
       });
-      console.log(Object.keys(element[1]))
     })
   }
 
+
+  /**
+   * Gets the minimun value from given objects data.
+   * @param {object} data 
+    * @returns {number} the minimum value.
+   * 
+   */
   countMin(data) {
     data = Object.values(data);
     let length = data.length, min = Infinity;
@@ -110,7 +133,12 @@ class DataVisualizer extends React.Component {
     }
     return min;
   }
-
+  /**
+    * Gets the maximum value from given objects data.
+    * @param {object} data 
+    * @returns {number} the maximum value.
+    * 
+    */
   countMax(data) {
     data = Object.values(data);
     let len = data.length, max = -Infinity;
@@ -122,11 +150,22 @@ class DataVisualizer extends React.Component {
     return max;
   }
 
+  /**
+    * Counts the average value from given objects data.
+    * @param {object} data 
+    * @returns {number} the average value.
+    * 
+    */
   countAverage(data) {
     data = Object.values(data);
     return data.reduce((p, c, i) => { return p + (c - p) / (i + 1) }, 0);
   }
 
+  /**
+    * Counts the standard deviation value from given objects data.
+    * @param {object} data 
+    * @returns {number} the standard deviation.
+    */
   countStandardDeviation(data) {
     data = Object.values(data);
     const n = data.length
@@ -134,12 +173,14 @@ class DataVisualizer extends React.Component {
     return Math.sqrt(data.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
   }
 
-
+  /**
+   * React components render function.
+   */
   render() {
     let data = Object.entries(this.state.data);
     let graphs = data.map((element, index) => {
       console.log(element);
-      return <div className="chart-container" >
+      return <div title="canvas" className="chart-container" >
         <canvas id={"canvas-" + index}></canvas>
         <div className="numbers-row">
           <p>Min: <br />{this.countMin(element[1])}</p>
